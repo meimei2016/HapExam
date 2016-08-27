@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hapExam.hap.sales.mapper.OrderLineDetailMapper">
+<resultMap id="OrderLineDetailMap" type="hapExam.hap.sales.dto.OrderLines">
+		<result column="HEADER_ID" property="headerId" jdbcType="INTEGER"/>
+        <result column="AMOUNT" property="amount" jdbcType="INTEGER"/> 
+        <result column="LINE_NUMBER" property="lineNumber" jdbcType="BIGINT"/>
+        <result column="LINE_ID" property="lineId" jdbcType="BIGINT"/>
+        <result column="ORDERD_QUANTITY" property="orderdQuantity" jdbcType="BIGINT"/>
+        <result column="ORDER_QUANTITY_UOM" property="orderQuantityUom" jdbcType="VARCHAR"/>
+        <result column="DESCRIPTION" property="description" jdbcType="VARCHAR"/>
+        <result column="ITEM_CODE" property="itemCode" jdbcType="VARCHAR"/>
+        <result column="ITEM_DESCRIPTION" property="itemDescription" jdbcType="VARCHAR"/>
+        <result column="UNIT_SELLING_PRICE" property="unitSellingPrice" jdbcType="INTEGER"/>        
+        <result column="ADDITION1" property="addition1" jdbcType="VARCHAR"/>
+        <result column="ADDITION2" property="addition2" jdbcType="VARCHAR"/>
+        <result column="ADDITION3" property="addition3" jdbcType="VARCHAR"/>
+        <result column="ADDITION4" property="addition4" jdbcType="VARCHAR"/>
+        <result column="ADDITION5" property="addition5" jdbcType="VARCHAR"/>		
+	</resultMap> 
+	<select id="selectOrderLineDetail"  resultType="hapExam.hap.sales.dto.OrderLines">
+	  select LINE_ID,line.INVENTORY_ITEM_ID,LINE_NUMBER,ORDERD_QUANTITY ,
+	    	  ORDER_QUANTITY_UOM,UNIT_SELLING_PRICE,DESCRIPTION,ITEM_CODE,
+	    	  ITEM_DESCRIPTION,ORDERD_QUANTITY*UNIT_SELLING_PRICE AMOUNT,
+	    	  ADDITION1,ADDITION2,ADDITION3,ADDITION4,ADDITION5
+	  from hap_om_order_lines line,hap_inv_inventory_items item	   		
+	  <where> 
+	  		line.INVENTORY_ITEM_ID=item.INVENTORY_ITEM_ID
+	  		and item.INVENTORY_ITEM_ID=line.INVENTORY_ITEM_ID
+        	<if test="headerId != null">
+        		and HEADER_ID=#{headerId,jdbcType=INTEGER}
+            </if>
+	  		and HEADER_ID=#{headerId}
+	  </where>
+	</select>
+	</mapper>

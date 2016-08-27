@@ -1,0 +1,284 @@
+<#--
+ * description: Fruit.html
+ * version: 1.0 
+ * #{copyright}#
+ * 
+-->
+<#include "../include/head.html">
+<body>
+	<form id="orderForm"></form>
+    <div id="orderGrid" style="margin: 0; padding: 0"></div>
+    <script type="text/javascript">
+     $(function() {
+    	debugger;
+        window['orderForm'] = $("#orderForm").ligerForm({
+            fields : [ {
+                display : '<@spring.message "hap.sales.companyName"/>',
+                name : "companyId",
+                type : "popup",
+                newline : false,
+                textField:'companyName',
+                options:{
+                    readonly:false,
+                    valueField : 'companyId',
+                    textField : 'companyName',
+                    grid : {
+                        columns : [{
+                            display : '<@spring.message "hap.sales.companynumber"/>',
+                            name : "companyNumber",
+                            width : 120,
+                            type : "text",
+                            align : "left"
+                        },{
+                            display : '<@spring.message "hap.sales.companyname"/>',
+                            name : "companyName",
+                            width : 120,
+                            type : "text",
+                            align : "left"
+                        }],
+                        //数据查询的url
+                        url : '${base.contextPath}/sales/query/company' 
+                    },
+                    condition : {
+                        inputWidth : 120,
+                        labelWidth : 70,
+                        fields : [ {
+                            display : '<@spring.message "hap.sales.companynumber"/>',
+                            name : "companyNumber",
+                            newline : true,
+                            type : "text"
+                        },{
+                            display : '<@spring.message "hap.sales.companyname"/>',
+                            name : "companyName",
+                            newline : true,
+                            type : "text"
+                        }]
+                    }
+                }
+            },{ 
+            display : '<@spring.message "hap.sales.customername"/>',
+            name : "customerId",
+            type : "popup",
+            newline : false,
+            textField:'customerName',
+            options:{
+                readonly:false,
+                valueField : 'customerId',
+                textField : 'customerName',
+                grid : {
+                	onLoadData: function(){
+                		if($.ligerui.get('companyId').getValue()!= null){
+                			this.setParm('companyId', $.ligerui.get('companyId').getValue());
+                		}
+                    },
+                	columns : [ {
+                        display : '<@spring.message "hap.sales.customernumber"/>',
+                        name : "customerNumber",
+                        width : 120,
+                        type : "text",
+                        align : "left"
+                    }, {
+                        display : '<@spring.message "hap.sales.customername"/>',
+                        name : "customerName",
+                        width : 120,
+                        type : "text",
+                        align : "left"
+                    }],
+                    url : '${base.contextPath}/sales/query/customer' 
+                },
+                condition : {
+                    inputWidth : 120,
+                    labelWidth : 70,
+                    fields : [ {
+                        display : '<@spring.message "hap.sales.customernumber"/>',
+                        name : "customerNumber",
+                        newline : true,
+                        type : "text"
+                    },{
+                        display : '<@spring.message "hap.sales.customername"/>',
+                        name : "customerName",
+                        newline : true,
+                        type : "text"
+                    }]
+                }
+            }
+        },{
+            type : 'text',
+            newline : false,
+            label : '<@spring.message "hap.sales.ordernumber"/>',
+            name : 'orderNumber',
+            width: 120
+        }, {
+                display : '<@spring.message "hap.sales.inventoryitemdescription"/>',
+                name : "inventoryItemId",
+                type : "popup",
+                newline : true,
+                textField:'itemDescription',
+                options:{
+                    readonly:false,//是否可编辑
+                    valueField : 'inventoryItemId',//选中的valueField
+                    textField : 'itemDescription',//选中的textField
+                    grid : {
+                        columns : [ {
+                            display : '<@spring.message "hap.sales.inventoryitemcode"/>',
+                            name : "itemCode",
+                            width : 120,
+                            type : "text",
+                            align : "left"
+                        }, {
+                            display : '<@spring.message "hap.sales.inventoryitemdescription"/>',
+                            name : "itemDescription",
+                            width : 120,
+                            type : "text",
+                            align : "left"
+                        }],
+                        //数据查询的url
+                        url : '${base.contextPath}/sales/query/inventoryItem' 
+                    },
+                    //lov上的查询条件
+                    condition : {
+                        inputWidth : 120,
+                        labelWidth : 70,
+                        fields : [ {
+                            display : '<@spring.message "hap.sales.inventoryitemcode"/>',
+                            name : "itemCode",
+                            newline : true,
+                            type : "text"
+                        },{
+                            display : '<@spring.message "hap.sales.inventoryitemdescription"/>',
+                            name : "itemDescription",
+                            newline : true,
+                            type : "text"
+                        }]
+                    }
+                }
+            },{
+                display   : '<@spring.message "hap.sales.orderstatus"/>',
+                name      : "orderStatus",
+                type      : "select",
+                textField : "orderStatus",
+                newline   : false,
+                options   : {
+                	valueField : 'ID',
+                    textField  : 'text',
+                    data       : [{
+	                   		ID   :'<@spring.message "hap.new"/>',
+	                      	text :'<@spring.message "hap.new"/>'
+                        },{
+                          	ID :'<@spring.message "orderstatus.submited"/>',
+                          	text: '<@spring.message "orderstatus.submited"/>'
+                       	
+                        },{
+                        	ID:'<@spring.message "orderstatus.approved"/>',
+                        	text :'<@spring.message "orderstatus.approved"/>'
+                        },{
+                        	ID:'<@spring.message "orderstatus.rejected"/>',
+                        	text :'<@spring.message "orderstatus.rejected"/>'
+                       }]
+                }
+            }],
+            buttons : [ {
+                text : '<@spring.message "hap.query"/>',
+                disabled : false,
+                width : 60,
+                click : function() {
+                    Hap.gridQuery({
+                        form : orderForm,
+                        grid : orderGrid
+                    })
+                }
+            }, {
+            	text : '<@spring.message "hap.reset"/>',
+                disabled : false,
+                width : 60,
+                click : function() {
+                    orderForm.reset();
+                }
+            }, {
+                text : '<@spring.message "hap.sales.exportexcel"/>',
+                disabled : false,
+                width : 60,
+                click : function() {
+                	/* window.popWin=$.ligerDialog.open({
+                		load :false,
+                		width : 800,
+                		height : 500,
+                		title :'<@spring.message "sysfile.download"/>',
+                		url:'downLoadFile.html'
+                	}) */
+                }
+            }]
+        });
+
+        window['orderGrid'] = $("#orderGrid").ligerGrid({
+            unSetValidateAttr : false,
+            columns : [{
+                display : '<@spring.message "hap.sales.ordernumber"/>',
+                name : 'orderNumber',
+                align : 'left',
+                width : 120,
+                type : 'text',
+                render:function(item){
+                  return '<a href="{base.contextPath}/../../sales/orderSummary/showDetailInfo?headerId='+item.headerId+'">'+item.orderNumber + '</a>';
+               }
+            },{
+                display : '<@spring.message "hap.sales.companyName"/>',
+                name : 'companyName',
+                align : 'left',
+                width : 120,
+                type : 'text'
+                
+            },{
+                display : '<@spring.message "hap.sales.customername"/>',
+                name    : 'customerName',
+                align   : 'left',
+                width   : 120
+            }, {
+                display : '<@spring.message "hap.sales.orderdate"/>',
+                name    : 'orderDate',
+                align   : 'left',
+                width   : 150,
+                type    : 'date',
+                format  : "yyyy-MM-dd"
+            },{
+            	display: '<@spring.message "hap.sales.orderstatus"/>',
+                name   : 'orderStatus',
+                align  : 'center',
+                width  : 120
+            },{
+            	display: '<@spring.message "hap.sales.orderamount"/>',
+                name   : 'amount',
+                align  : 'center',
+                width  : 120,
+                type   : 'int'
+            }],
+            url : '${base.contextPath}/sales/orderSummary/query',
+            toolbar : {
+                items : [ {
+                    text : '<@spring.message "hap.new"/>',
+                    disable : false,
+                    click : function() {                    	
+                    	window.popWin=$.ligerDialog.open({
+                    		load :false,
+                    		width : 900,
+                    		height : 700,
+                    		url:'orderDetail.html'
+              
+                    	})
+
+                    },
+                    icon : 'add'
+                }, {
+                    line : true
+                } ]
+            },
+            enabledEdit : true,
+            width : '99%',
+            height : '98%',
+            checkbox : true
+        });
+    });
+    
+    </script>
+</body>
+</html>

@@ -1,0 +1,478 @@
+<#--
+ * description: OmOrderHeaders
+ * version: 1.0
+ * #copyright#
+ *
+-->
+<#include "../include/head.html">
+<body style="padding: 10px;">
+<form id="orderForm"></form>
+
+<div id="salesorderDetailTabs" class="liger-tab">
+   <div tabid="mainGrid" style="margin: 0; padding: 0"  title="主要" lselected="true">
+   <div id="mainGrid"></div>
+   </div>
+<div tabid="otherGrid"  title="其他" lselected="true">
+    <div id="otherGrid"></div>
+</div>
+</div>
+<script type="text/javascript">
+	
+    $(function () {
+    	debugger;
+    	
+        window['orderForm'] = $("#orderForm").ligerForm({
+        	
+            fields : [{
+                display : "lineNumber",
+                name : "lineNumber",
+                width : 150,
+                labelWidth : 80,
+                 editor:{
+                	 type:"text"
+                 },
+                 validate: {
+                     required: true
+                 }
+            },{
+                display : "companyName",
+                name : "companyId",
+                type : "popup",
+                newline : false,
+                width : 150,
+                labelWidth : 80,
+                textField:'companyName',
+                options:{
+                    readonly:false,
+                    valueField : 'companyId',
+                    textField : 'companyName',
+                    grid : {
+                    	 width:500,
+                        columns : [ {
+                            display : 'companyNumber',
+                            name : "companyNumber",
+                            width : 200,
+                            type : "text",
+                            align : "left"
+                        }, {
+                            display : 'companyName',
+                            name : "companyName",
+                            width :200,
+                            type : "text",
+                            align : "left"
+                        }],
+                        url : '${base.contextPath}/sales/query/company' 
+                    },
+                    condition : {
+                        inputWidth : 150,
+                        labelWidth : 150,
+                        fields : [ {
+                            display : 'companyNumber',
+                            name : "companyNumber",
+                            newline : false,
+                            type : "text"
+                        }, {
+                            display : 'companyName',
+                            name : "companyName",
+                            newline : true,
+                            type : "text"
+                        } ]
+                    }
+                },
+                validate: {
+                    required: true
+                }
+            },{
+                display : "customerName",
+                name : "customerId",
+                type : "popup",
+                newline : false,
+                width : 150,
+                labelWidth : 80,
+                textField:'customerName',
+                options:{
+                    readonly:false,
+                    valueField : 'customerId',
+                    textField : 'customerName',
+                    grid : {
+                    	width:500,
+                        columns : [ {
+                            display : 'customerNumber',
+                            name : "customerNumber",
+                            width : 200,
+                            type : "text",
+                            align : "left"
+                        }, {
+                            display : 'customerName',
+                            name : "customerName",
+                            width :200,
+                            type : "text",
+                            align : "left"
+                        }],
+                        url : '${base.contextPath}/sales/query/customer' ,
+                       
+                        onLoadData: function() {
+                            if($.ligerui.get('companyId').getValue())
+                           { 
+                            	this.setParm('companyId', $.ligerui.get('companyId').getValue());
+                            }
+                            else
+                           {
+                            	this.setParm('companyId', -1);
+                            }
+                       }
+                      
+                    },
+                    condition : {
+                        inputWidth : 150,
+                        labelWidth : 150,
+                        fields : [ {
+                            display : 'customerNumber',
+                            name : "customerNumber",
+                            newline : false,
+                            type : "text"
+                        }, {
+                            display : 'customerName',
+                            name : "customerName",
+                            newline : false,
+                            type : "text"
+                        } ]
+                    }
+                },
+               validate: {
+                   required: true
+                }
+            },{
+            	display : 'orderDate',
+                name : "orderDate",
+                newline : true,
+                align  : 'center',
+                width : 150,
+                labelWidth : 80,
+	            type:'date',
+                format : "yyyy-MM-dd",
+                editor : {
+                    type: 'date'
+                },
+              validate: {
+                required: true
+             }
+            },{
+                display : "orderPrice",
+                name : "orderPrice",
+                width : 150,
+                labelWidth : 80,
+                newline : false ,
+               editor:{
+            	   disabled:true
+               }
+            },{
+                display : "orderStatus",
+                name : "orderStatus",
+                textField :"orderStatus",
+                width : 150,
+                labelWidth : 80,
+                newline : false ,
+                editor:{
+             	   disabled:true
+                }
+            }],
+            buttons: [{
+                text    : '<@spring.message "hap.save"/>',
+                disabled: false,
+                newline:true,
+                width   : 60,
+                click   : function () {
+                    Hap.gridQuery({
+                        form: orderForm,
+                        grid: orderGrid
+                    })
+                }
+            },{
+                text    :'<@spring.message "hap.submit"/>',
+                disabled: false,
+                width   : 60,
+                click   : function () {
+                    Hap.gridQuery({
+                        form: orderForm,
+                        grid: orderGrid
+                    })
+                }
+            },{
+                text    : "审批",
+                disabled: false,
+                width   : 60,
+                click   : function () {
+                   
+                }
+            },{
+                text    :"拒绝",
+                disabled: false,
+                width   : 60,
+                click   : function () { 
+                }
+            },{
+                text    : "整单删除",
+                disabled: false,
+                width   : 60,
+                click   : function () { 
+                }
+            },{
+                text    : "单据打印",
+                disabled: false,
+                width   : 60,
+                click   : function () { 
+                }
+            },{
+                text    : "返回",
+                disabled: false,
+                width   : 60,
+                click   : function () {
+                	$.ligerDialog.close({
+                		url:"orderdetail.html" });
+                }
+            }]
+        });
+
+        window['mainGrid'] = $("#mainGrid").ligerGrid({
+            unSetValidateAttr: false,
+            columns          : [{
+        		display: "行号",
+        		width  : 50,
+        		name   : 'lineId',
+        		type   : 'text',
+        		textField :'lineNumber'
+        	},{
+        	    display : '物料编码',
+        	    name : 'inventoryItemId',
+        	    width :120,
+        	    textField:'itemCode',
+        	    editor : {
+        	        type : 'popup',
+        	        valueField : 'inventoryItemId',
+        	        textField : 'itemCode',
+        	      
+        	        grid : {
+                    	width:500,
+                        columns : [ {
+                            display : '物料编码',
+                            name : "itemCode",
+                            width : 200,
+                            type : "text",
+                            align : "left"
+                        }, {
+                            display : '物料描述',
+                            name : "itemDescription",
+                            width :200,
+                            type : "text",
+                            align : "left"
+                        }],
+                        url : '${base.contextPath}/sales/query/inventoryItem?itemFlag=Y' ,
+                    },
+                    condition : {
+                        inputWidth : 150,
+                        labelWidth : 150,
+                        fields : [ {
+                            display : '物料编码',
+                            name : "itemCode",
+                            newline : false,
+                            type : "text"
+                        }, {
+                            display : '物料描述',
+                            name : "itemDescription",
+                            newline : false,
+                            type : "text"
+                        } ]
+                    }
+        	    }
+        	    
+        	},{
+        		display: '物料描述',
+        		width: 150,
+        		name: 'itemDescription',
+        		type: 'text',
+        		textField: 'itemDescription'
+           
+        	},{
+                display: '产品单位',
+                name   : 'orderQuantityUom',
+                align  : 'left',
+                width  : 120,
+                editor : {
+                    type: 'text'
+                },
+	            validate:{
+		            required:true
+	            }
+            },{
+                display: '数量',
+                name   : 'orderdQuantity',
+                align  : 'left',
+                width  : 120,
+                editor : {
+                    type: 'text'
+                },
+	            validate:{
+		            required:true
+	            }
+            },{
+                display: '销售单价',
+                name   : 'unitSellingPrice',
+                align  : 'left',
+                width  : 120,
+                editor : {
+                    type: 'text'
+                },
+	            validate:{
+		            required:true
+	            }
+            },{
+                display: '金额',
+               name   : 'amount',
+              
+                align  : 'left',
+                width  : 120,
+                editor : {
+                    type: 'text'
+                },
+	            validate:{
+		            required:true
+	            }
+            },{
+                display: '备注',
+                name   : 'description',
+               
+                 align  : 'left',
+                 width  : 120,
+                 editor : {
+                     type: 'text'
+                 },
+ 	            validate:{
+ 		            required:true
+ 	            }
+             }],
+            url              : '${base.contextPath}/sales/orderDetail/query',
+            toolbar          : {
+                items: [{
+                    text   : '<@spring.message "hap.new"/>',
+                    disable: false,
+     	                click : function() {
+     	                    mainGrid.addRow({
+     	                    });
+     	                },
+                    icon   : 'add'
+                }, {
+                    line: true
+                },{
+                    text   : '<@spring.message "hap.save"/>',
+                    disable: false,
+                    click  : function () {
+                    	
+                    },
+                    icon   : 'save'
+                }, {
+                    line: true
+                },{
+                    text   : '<@spring.message "hap.delete"/>',
+                    disable: false,
+                    click  : function () {
+                    },
+                    icon   : 'delete'
+                }]
+            },
+            enabledEdit      : true,
+            width            : '99%',
+            height           : '98%',
+            checkbox         : true
+        });
+        
+        
+        
+        
+        window['otherGrid'] = $("#otherGrid").ligerGrid({
+            unSetValidateAttr: false,
+            columns          : [{
+        		display: "�к�",
+        		width: 50,
+        		type: 'text'
+        	},{
+        	    display : '������Ϣ1',
+        	    name : 'accessory1',
+        	    width : 150,
+        	    editor : {
+        	        type : 'text'
+        	    }
+        	    
+        	},{
+        	    display : '������Ϣ2',
+        	    name : 'accessory2',
+        	    width : 150,
+        	    editor : {
+        	        type : 'text'
+        	    }
+        	    
+        	},{
+        	    display : '������Ϣ3',
+        	    name : 'accessory3',
+        	    width : 150,
+        	    editor : {
+        	        type : 'text'
+        	    }
+        	    
+        	},{
+        	    display : '������Ϣ4',
+        	    name : 'accessory4',
+        	    width : 150,
+        	    editor : {
+        	        type : 'text'
+        	    }
+        	    
+        	},{
+        	    display : '������Ϣ5',
+        	    name : 'accessory5',
+        	    width : 150,
+        	    editor : {
+        	        type : 'text'
+        	    }
+        	    
+        	}],
+         //   url              : '${base.contextPath}/orderHeaders/query',
+            toolbar          : {
+                items: [{
+                    text   : '<@spring.message "hap.new"/>',
+                    disable: false,
+     	                click : function() {
+     	                    mainGrid.addRow({
+     	                    });
+     	                },
+                    icon   : 'add'
+                }, {
+                    line: true
+                },{
+                    text   : '<@spring.message "hap.save"/>',
+                    disable: false,
+                    click  : function () {
+                    	
+                    },
+                    icon   : 'save'
+                }, {
+                    line: true
+                },{
+                    text   : '<@spring.message "hap.delete"/>',
+                    disable: false,
+                    click  : function () {
+                    },
+                    icon   : 'delete'
+                }]
+            },
+            enabledEdit      : true,
+            width            : '99%',
+            height           : '98%',
+            checkbox         : true
+          });
+    });
+</script>
+</body>
+</html>
+
+

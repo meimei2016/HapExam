@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hapExam.hap.sales.mapper.CompanyMapper">
+<select id="selectCompany" resultType="hapExam.hap.sales.dto.Companys">
+   select company_number,company_name from hap_org_companys
+   <where>
+     <if test="companyId!=0">
+       company_id=#{companyId}
+     </if>
+     <if test="companyName!= null">
+       and company_name=#{companyName}
+     </if>
+   </where>
+
+</select>
+
+</mapper>

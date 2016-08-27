@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="hapExam.hap.sales.mapper.OrderMapper">
+	<resultMap id="BaseResultMap" type="hapExam.hap.sales.dto.Order" extends="com.hand.hap.mapper.StdMapper.STD">
+        <result column="HEADER_ID" property="headerId" jdbcType="BIGINT"/>
+        <result column="AMOUNT" property="amount" jdbcType="INTEGER"/>        
+        <result column="COMPANY_NAME" property="companyName" jdbcType="VARCHAR"/>
+        <result column="ORDER_DATE" property="orderDate" jdbcType="DATE"/>
+        <result column="ORDER_STATUS" property="orderStatus" jdbcType="VARCHAR"/>
+        <result column="ORDER_NUMBER" property="orderNumber" jdbcType="VARCHAR"/>
+        <result column="CUSTOMER_NAME" property="customerName" jdbcType="VARCHAR"/>
+    </resultMap>
+	
+	<select id="selectByOrder" parameterType="hapExam.hap.sales.dto.Order" resultMap="BaseResultMap">
+		 SELECT OH.ORDER_NUMBER,CC.COMPANY_NAME,CC.customer_name,OH.HEADER_ID,
+		       OH.ORDER_STATUS,OH.ORDER_DATE,OL.ORDERD_QUANTITY*OL.UNIT_SELLING_PRICE AMOUNT
+		  FROM (select company.COMPANY_ID,COMPANY_NUMBER,COMPANY_NAME,customer_id,customer_number,customer_name  
+		  			from hap_org_companys company,hap_ar_customers customer 
+		  			where company.COMPANY_ID=customer.COMPANY_ID) CC,
+		  	   hap_om_order_headers OH,
+		  	   hap_om_order_lines OL,
+           hap_inv_inventory_items item
+           
+		<where>
+		   OH.COMPANY_ID=CC.COMPANY_ID
+           and OH.customer_id=CC.customer_id
+           and OH.header_id=OL.header_id
+           and item.INVENTORY_ITEM_ID=OL.INVENTORY_ITEM_ID
+        	<if test="companyName != null">
+                and CC.COMPANY_NAME = #{companyName,jdbcType=VARCHAR}
+            </if>
+            <if test="customerName != null">
+                AND CC.CUSTOMER_NAME like #{customerName,jdbcType=VARCHAR}
+            </if>
+            <if test="orderNumber != null">
+                AND OH.ORDER_NUMBER like #{orderNumber,jdbcType=VARCHAR}
+            </if>
+            <if test="orderStatus != null">
+                AND OH.ORDER_STATUS like #{orderStatus,jdbcType=VARCHAR}
+            </if>
+            <if test="orderStatus != null">
+                AND item.ITEM_DESCRIPTION like #{itemDescription,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+    
+    <resultMap type="hapExam.hap.sales.dto.OrderDetail" id="detailOrderInfoMap" >
+    	<result column="HEADER_ID" property="headerId" jdbcType="INTEGER"/>
+        <result column="AMOUNT" property="amount" jdbcType="INTEGER"/>        
+        <result column="COMPANY_NAME" property="companyName" jdbcType="VARCHAR"/>
+        <result column="ORDER_DATE" property="orderDate" jdbcType="DATE"/>
+        <result column="ORDER_STATUS" property="orderStatus" jdbcType="VARCHAR"/>
+        <result column="ORDER_NUMBER" property="orderNumber" jdbcType="VARCHAR"/>
+        <result column="LINE_NUMBER" property="lineNumber" jdbcType="BIGINT"/>
+        <result column="ORDERD_QUANTITY" property="orderdQuantity" jdbcType="BIGINT"/>
+        <result column="CUSTOMER_NAME" property="customerName" jdbcType="VARCHAR"/>
+        <result column="ORDER_QUANTITY_UOM" property="orderQuantityUom" jdbcType="VARCHAR"/>
+        <result column="DESCRIPTION" property="description" jdbcType="VARCHAR"/>
+        <result column="ITEM_CODE" property="itemCode" jdbcType="VARCHAR"/>
+        <result column="ITEM_DESCRIPTION" property="itemDescription" jdbcType="VARCHAR"/>
+        <result column="UNIT_SELLING_PRICE" property="unitSellingPrice" jdbcType="INTEGER"/>        
+        <result column="ADDITION1" property="addition1" jdbcType="VARCHAR"/>
+        <result column="ADDITION2" property="addition2" jdbcType="VARCHAR"/>
+        <result column="ADDITION3" property="addition3" jdbcType="VARCHAR"/>
+        <result column="ADDITION4" property="addition4" jdbcType="VARCHAR"/>
+        <result column="ADDITION5" property="addition5" jdbcType="VARCHAR"/>
+    </resultMap>
+    
+	<select id="selectDetialOrderInfo"  resultMap="detailOrderInfoMap">
+		 SELECT OH.ORDER_NUMBER,CC.COMPANY_NAME,CC.customer_name,OH.HEADER_ID,
+		       OH.ORDER_STATUS,OH.ORDER_DATE,OL.ORDERD_QUANTITY*OL.UNIT_SELLING_PRICE AMOUNT,
+		       item.ITEM_CODE,item.ITEM_DESCRIPTION,OL.UNIT_SELLING_PRICE,OL.ORDER_QUANTITY_UOM,OL.ORDERD_QUANTITY,
+		       OL.DESCRIPTION,OL.LINE_NUMBER,
+		       OL.ADDITION1,OL.ADDITION2,OL.ADDITION3,OL.ADDITION4,OL.ADDITION5
+		  FROM (select company.COMPANY_ID,COMPANY_NUMBER,COMPANY_NAME,customer_id,customer_number,customer_name  
+		  			from hap_org_companys company,hap_ar_customers customer 
+		  			where company.COMPANY_ID=customer.COMPANY_ID) CC,
+		  	   hap_om_order_headers OH,
+		  	   hap_om_order_lines OL,
+                hap_inv_inventory_items item
+           
+		<where>
+		   OH.COMPANY_ID=CC.COMPANY_ID
+           and OH.customer_id=CC.customer_id
+           and OH.header_id=OL.header_id
+           and item.INVENTORY_ITEM_ID=OL.INVENTORY_ITEM_ID
+           and OH.header_id=#{id}
+<!--             <if test="id!=0">
+           and OH.header_id=#{id}
+           </if>  -->
+        </where>
+	
+	</select>
+</mapper>
