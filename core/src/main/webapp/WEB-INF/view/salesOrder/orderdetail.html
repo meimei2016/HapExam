@@ -183,6 +183,7 @@
                 newline:true,
                 width   : 60,
                 click   : function () {
+                	
                     Hap.gridQuery({
                         form: orderForm,
                         grid: orderGrid
@@ -193,10 +194,14 @@
                 disabled: false,
                 width   : 60,
                 click   : function () {
-                    Hap.gridQuery({
-                        form: orderForm,
-                        grid: orderGrid
-                    })
+                	Hap.submitForm({
+               		 wrapArray:true,
+                       form : orderForm,
+                       grid: mainGrid,
+                       grid: otherGrid,
+                       gridName:'orderLines',
+                       url : '${base.contextPath}ll/orderheader/submit'
+                   }) 
                 }
             },{
                 text    : "审批",

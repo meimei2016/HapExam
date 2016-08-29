@@ -10,6 +10,6 @@ import hapExam.hap.sales.dto.OrderDetail;
 public interface OrderMapper extends Mapper<Order> {
 
 	List<Order> selectByOrder(Order order);
-	List<OrderDetail> selectDetialOrderInfo(int id);
+	List<OrderDetail> selectDetialOrderInfo(Order order);
 
 }

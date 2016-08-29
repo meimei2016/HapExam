@@ -16,6 +16,6 @@ public interface OrderSummaryService extends IBaseService<Order>, ProxySelf<Orde
 	    
 	 List<Order> batchUpdate(IRequest requestContext, @StdWho List<Order> orders);
 
-	 List<OrderDetail> selectDetialOrderInfo(IRequest requestContext,int headerId,int page, int pagesize);
+	 List<OrderDetail> selectDetialOrderInfo(IRequest requestContext,Order order,int page, int pagesize);
 
 }

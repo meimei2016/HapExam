@@ -30,7 +30,6 @@
         	<if test="headerId != null">
         		and HEADER_ID=#{headerId,jdbcType=INTEGER}
             </if>
-	  		and HEADER_ID=#{headerId}
 	  </where>
 	</select>
 	</mapper>

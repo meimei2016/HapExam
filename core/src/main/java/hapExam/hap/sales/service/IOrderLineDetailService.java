@@ -10,6 +10,7 @@ import hapExam.hap.sales.dto.OrderLineDetail;
 
 public interface IOrderLineDetailService extends IBaseService<OrderLineDetail>, ProxySelf<IOrderLineDetailService>{
 
-	List<OrderLineDetail> selectOrderLineDetail(IRequest requestContext, OrderLineDetail orderLineDetail, int page, int pagesize);
+	List<OrderLineDetail> selectOrderLineDetail(IRequest requestContext, OrderLineDetail orderLineDetail, int page,
+			int pagesize);
 
 }

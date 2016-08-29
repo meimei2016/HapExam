@@ -5,6 +5,7 @@ import java.util.Date;
 public class OrderDetail{
 	
 	private Long headerId;
+	private Long lineId;
 	private String orderNumber;
 	private String companyName;
 	private String customerName;
@@ -27,6 +28,18 @@ public class OrderDetail{
 	public OrderDetail() {
 		super();
 	}
+	
+	
+	public Long getLineId() {
+		return lineId;
+	}
+
+
+	public void setLineId(Long lineId) {
+		this.lineId = lineId;
+	}
+
+
 	public Long getHeaderId() {
 		return headerId;
 	}

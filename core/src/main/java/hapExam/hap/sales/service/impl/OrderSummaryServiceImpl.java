@@ -37,9 +37,9 @@ public class OrderSummaryServiceImpl extends BaseServiceImpl<Order> implements O
 	}
 
 	@Override
-	public List<OrderDetail> selectDetialOrderInfo(IRequest requestContext,int headerId,int page,int pagesize) {
+	public List<OrderDetail> selectDetialOrderInfo(IRequest requestContext,Order order,int page,int pagesize) {
 		PageHelper.startPage(page, pagesize);
-		List<OrderDetail> list=orderMpper.selectDetialOrderInfo(headerId);
+		List<OrderDetail> list=orderMpper.selectDetialOrderInfo(order);
 		return list;
 	}
 

@@ -18,9 +18,12 @@ import com.hand.hap.core.exception.BaseException;
 import com.hand.hap.system.controllers.BaseController;
 import com.hand.hap.system.dto.ResponseData;
 
+import hapExam.hap.sales.dto.Order;
+import hapExam.hap.sales.dto.OrderDetail;
 import hapExam.hap.sales.dto.OrderLines;
 import hapExam.hap.sales.service.IOrderLineDetailService;
 import hapExam.hap.sales.service.IOrderLinesService;
+import hapExam.hap.sales.service.OrderSummaryService;
 
 @Controller
 @RequestMapping(value="/sales/orderDetail")
@@ -30,14 +33,17 @@ public class OrderLinesController extends BaseController {
 	IOrderLinesService orderLinesService;
 	@Autowired
 	IOrderLineDetailService olds;
+	@Autowired
+	OrderSummaryService oss;
 	
 	@RequestMapping(path = "/query",method={RequestMethod.POST,RequestMethod.GET})
     @ResponseBody
-    public ResponseData getOrders(OrderLines orderline, 
+    public ResponseData getOrders(Order Order, 
     		@RequestParam(defaultValue = DEFAULT_PAGE) int page,
             @RequestParam(defaultValue = DEFAULT_PAGE_SIZE) int pagesize, HttpServletRequest request) {
         IRequest requestContext = createRequestContext(request);
-        return new ResponseData(olds.selectOrderLineDetail(requestContext, orderline, page, pagesize));
+        List<OrderDetail> list=oss.selectDetialOrderInfo(requestContext, Order, page, pagesize);
+        return new ResponseData(list);
     }
 	@RequestMapping(value = "/submit", method = RequestMethod.POST)
     @ResponseBody
@@ -53,6 +59,4 @@ public class OrderLinesController extends BaseController {
         return new ResponseData(orderLinesService.batchUpdate(requestContext, orderlines));
     }
 	
-	
-
 }

@@ -69,7 +69,7 @@ public class Order {
 	public Long getHeaderId() {
 		return headerId;
 	}
-	public void setHearderId(Long headerId) {
+	public void setHeaderId(Long headerId) {
 		this.headerId = headerId;
 	}
 	public String getOrderNumber() {

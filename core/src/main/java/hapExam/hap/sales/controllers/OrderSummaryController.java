@@ -1,6 +1,5 @@
 package hapExam.hap.sales.controllers;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -20,7 +19,6 @@ import com.hand.hap.system.dto.ResponseData;
 
 import hapExam.hap.sales.dto.Order;
 import hapExam.hap.sales.dto.OrderDetail;
-import hapExam.hap.sales.dto.OrderLines;
 import hapExam.hap.sales.service.IOrderLinesService;
 import hapExam.hap.sales.service.OrderSummaryService;
 
@@ -57,21 +55,17 @@ public class OrderSummaryController extends BaseController{
     
    @RequestMapping(path = "/showDetailInfo",method={RequestMethod.GET})
    @ResponseBody
-   public ModelAndView showDetailOrderInfo(HttpServletRequest request,HttpServletResponse response,@RequestParam(value="headerId", defaultValue ="0") int headerId){
+   public ModelAndView showDetailOrderInfo(HttpServletRequest request,HttpServletResponse response,@RequestParam(value="headerId", defaultValue ="0") Long headerId){
 	   
 	   ModelAndView modelAndView=new ModelAndView();
-	   IRequest requestContext = createRequestContext(request);
-	   /*List<Object> list=new ArrayList<Object>();
-	   OrderLines orderLine=new OrderLines();
-	   orderLine.setHeaderId((long) headerId);
-	   List<OrderLines> orderLineList=orderLinesService.selectOrderLineDetail(requestContext, orderLine, 0, 10);
-	   list.add(orderLineList);*/
-	   //list.add(l);
-	   
-	   List<OrderDetail> list=orderSummaryService.selectDetialOrderInfo(requestContext,headerId,1,10);
+	   IRequest requestContext = createRequestContext(request);   
+	   Order order=new Order();
+	   order.setHeaderId(headerId);
+	   List<OrderDetail> list=orderSummaryService.selectDetialOrderInfo(requestContext,order,1,10);
 	   modelAndView.addObject(new ResponseData(list));
 	   modelAndView.setViewName(getViewPath()+"/salesOrder/orderDetail");
 	   return modelAndView;
    }
         
 }
+

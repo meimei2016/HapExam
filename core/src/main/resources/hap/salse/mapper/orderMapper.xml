@@ -44,8 +44,9 @@
         </where>
     </select>
     
-    <resultMap type="hapExam.hap.sales.dto.OrderDetail" id="detailOrderInfoMap" >
+    <resultMap type="hapExam.hap.sales.dto.OrderDetail"  id="detailOrderInfoMap" >
     	<result column="HEADER_ID" property="headerId" jdbcType="INTEGER"/>
+    	<result column="LINE_ID" property="lineId" jdbcType="INTEGER"/>
         <result column="AMOUNT" property="amount" jdbcType="INTEGER"/>        
         <result column="COMPANY_NAME" property="companyName" jdbcType="VARCHAR"/>
         <result column="ORDER_DATE" property="orderDate" jdbcType="DATE"/>
@@ -66,8 +67,8 @@
         <result column="ADDITION5" property="addition5" jdbcType="VARCHAR"/>
     </resultMap>
     
-	<select id="selectDetialOrderInfo"  resultMap="detailOrderInfoMap">
-		 SELECT OH.ORDER_NUMBER,CC.COMPANY_NAME,CC.customer_name,OH.HEADER_ID,
+	<select id="selectDetialOrderInfo" parameterType="hapExam.hap.sales.dto.Order" resultMap="detailOrderInfoMap">
+		 SELECT OL.LINE_ID,OH.ORDER_NUMBER,CC.COMPANY_NAME,CC.customer_name,OH.HEADER_ID,
 		       OH.ORDER_STATUS,OH.ORDER_DATE,OL.ORDERD_QUANTITY*OL.UNIT_SELLING_PRICE AMOUNT,
 		       item.ITEM_CODE,item.ITEM_DESCRIPTION,OL.UNIT_SELLING_PRICE,OL.ORDER_QUANTITY_UOM,OL.ORDERD_QUANTITY,
 		       OL.DESCRIPTION,OL.LINE_NUMBER,
@@ -77,17 +78,16 @@
 		  			where company.COMPANY_ID=customer.COMPANY_ID) CC,
 		  	   hap_om_order_headers OH,
 		  	   hap_om_order_lines OL,
-                hap_inv_inventory_items item
+               hap_inv_inventory_items item
            
 		<where>
 		   OH.COMPANY_ID=CC.COMPANY_ID
            and OH.customer_id=CC.customer_id
            and OH.header_id=OL.header_id
            and item.INVENTORY_ITEM_ID=OL.INVENTORY_ITEM_ID
-           and OH.header_id=#{id}
-<!--             <if test="id!=0">
-           and OH.header_id=#{id}
-           </if>  -->
+			<if test="headerId!=null">
+           and OH.header_id=#{headerId}
+           </if>
         </where>
 	
 	</select>

@@ -1,6 +1,8 @@
 package hapExam.hap.sales.dto;
 
+import java.beans.Transient;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
@@ -9,6 +11,7 @@ import javax.persistence.Table;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
+import com.hand.hap.core.annotation.Children;
 import com.hand.hap.system.dto.BaseDTO;
 
 //@MultiLanguage
@@ -17,6 +20,14 @@ public class OrderHeader extends BaseDTO{
 
 	private static final long serialVersionUID = 1L;
 
+	@Children
+    private List<OrderLines> orderLines;
+
+
+	public List<OrderLines> getOrderLines() {
+		return orderLines;
+	}
+	
 	@Id
     @Column
     @GeneratedValue
