@@ -1,5 +1,6 @@
 package hapExam.hap.sales.controllers;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -20,7 +21,9 @@ import com.hand.hap.system.dto.ResponseData;
 
 import hapExam.hap.sales.dto.Order;
 import hapExam.hap.sales.dto.OrderDetail;
+import hapExam.hap.sales.dto.OrderHeader;
 import hapExam.hap.sales.dto.OrderLines;
+import hapExam.hap.sales.service.IOrderHeaderService;
 import hapExam.hap.sales.service.IOrderLineDetailService;
 import hapExam.hap.sales.service.IOrderLinesService;
 import hapExam.hap.sales.service.OrderSummaryService;
@@ -35,6 +38,7 @@ public class OrderLinesController extends BaseController {
 	IOrderLineDetailService olds;
 	@Autowired
 	OrderSummaryService oss;
+	IOrderHeaderService orderHeaderService;
 	
 	@RequestMapping(path = "/query",method={RequestMethod.POST,RequestMethod.GET})
     @ResponseBody
@@ -45,18 +49,49 @@ public class OrderLinesController extends BaseController {
         List<OrderDetail> list=oss.selectDetialOrderInfo(requestContext, Order, page, pagesize);
         return new ResponseData(list);
     }
-	@RequestMapping(value = "/submit", method = RequestMethod.POST)
+	@RequestMapping(value = "/insert", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseData submitFruit(@RequestBody List<OrderLines> orderlines, BindingResult result, HttpServletRequest request)
+    public ResponseData insetOrderDetail(@RequestBody OrderHeader orderHeader, BindingResult result, HttpServletRequest request)
             throws BaseException {
-        getValidator().validate(orderlines, result);
+        getValidator().validate(orderHeader, result);
         if (result.hasErrors()) {
             ResponseData rd = new ResponseData(false);
             rd.setMessage(getErrorMessage(result, request));
             return rd;
         }
         IRequest requestContext = createRequestContext(request);
-        return new ResponseData(orderLinesService.batchUpdate(requestContext, orderlines));
+        List<OrderHeader> OrderHeaders=new ArrayList<OrderHeader>();
+        orderHeader.set__status("add");
+        OrderHeaders.add(orderHeader);        
+        orderHeaderService.batchUpdate(requestContext, OrderHeaders);
+        List<OrderLines> orderlines=orderHeader.getOrderLines();
+        for(OrderLines ol:orderlines){
+        	ol.set__status("add");
+        }
+        orderLinesService.batchUpdate(requestContext, orderlines);
+        return new ResponseData();
     }
-	
+	@RequestMapping(value = "/submit", method = RequestMethod.POST)
+    @ResponseBody
+    public ResponseData submitOrderDetail(@RequestBody OrderHeader orderHeader, BindingResult result, HttpServletRequest request)
+    		throws BaseException {
+        getValidator().validate(orderHeader, result);
+        if (result.hasErrors()) {
+            ResponseData rd = new ResponseData(false);
+            rd.setMessage(getErrorMessage(result, request));
+            return rd;
+        }
+        IRequest requestContext = createRequestContext(request);
+        orderHeader.set__status("update");
+        List<OrderHeader> OrderHeaders=new ArrayList<OrderHeader>();
+        OrderHeaders.add(orderHeader);        
+        orderHeaderService.batchUpdate(requestContext, OrderHeaders);
+        List<OrderLines> orderlines=orderHeader.getOrderLines();
+        for(OrderLines ol:orderlines){
+        	ol.set__status("update");
+        }
+        orderLinesService.batchUpdate(requestContext, orderlines);        
+        return new ResponseData();
+		
+	}
 }

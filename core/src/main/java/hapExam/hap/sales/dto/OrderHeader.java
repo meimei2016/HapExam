@@ -1,6 +1,5 @@
 package hapExam.hap.sales.dto;
 
-import java.beans.Transient;
 import java.util.Date;
 import java.util.List;
 
@@ -21,6 +20,7 @@ public class OrderHeader extends BaseDTO{
 	private static final long serialVersionUID = 1L;
 
 	@Children
+	
     private List<OrderLines> orderLines;
 
 
